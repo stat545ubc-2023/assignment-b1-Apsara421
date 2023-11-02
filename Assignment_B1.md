@@ -216,4 +216,4 @@ test_that("Tests for average_by_group function", {
 })
 ```
 
-    ## Test passed 😀
+    ## Test passed 🥳
