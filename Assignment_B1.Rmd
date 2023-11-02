@@ -2,7 +2,7 @@
 title: "AssignmentB1"
 author: "Apsara"
 date: "2023-10-26"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +19,7 @@ library(testthat)
 ```
 
 ```{r}
-#Example of code I repreaded a lot in my analysis
+#Example of code I repeated a lot in my analysis
 
 trees_average_diameter <- vancouver_trees %>%
   group_by(genus_name)%>%
@@ -72,11 +72,9 @@ average_by_group(penguins, island, bill_length_mm)
 average_by_group(penguins, species, bill_length_mm, na.rm = TRUE, trim=0.1)
 
 ```
-Example 3: To show an error incase the user inputs a numerical categorical variabe that is not acually numeric
-```{r}
-error=TRUE
+Example 3: To show an error incase the user inputs a numerical categorical variable that is not actually numeric
+```{r, error=TRUE}
 average_by_group(penguins, species, island)
-
 ```
 Testing the function
 ```{r}
