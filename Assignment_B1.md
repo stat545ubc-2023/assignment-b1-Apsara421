@@ -92,14 +92,16 @@ finds the mean of another numeric variable of the grouped variable.
 #' @return tibble, returns a tibble with the data summarized by group and by the average of a numeric variable within the groups.
 
 average_by_group <- function(data, group, numeric_category, na.rm= FALSE, ...) 
-  # Check if group is numeric and numeric_category is not
+  # Check if group is numeric
   {check_numerical <- data %>%
     pull({{numeric_category}}) %>%
     is.numeric
   
 if (check_numerical) {data %>%
     group_by({{group}})%>%
-    summarize(average_variable = mean({{numeric_category}}, na.rm= na.rm, ...))
+    summarize(average_variable := mean({{numeric_category}}, na.rm= na.rm, ...))
+  
+  
   }
 else stop("The group variable must not be numeric.")
   }
@@ -216,4 +218,4 @@ test_that("Tests for average_by_group function", {
 })
 ```
 
-    ## Test passed 🥳
+    ## Test passed 🎉
