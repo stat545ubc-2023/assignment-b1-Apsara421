@@ -1,0 +1,109 @@
+---
+title: "AssignmentB1"
+author: "Apsara"
+date: "2023-10-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+library(gapminder)
+library(dplyr)
+library(datateachr)
+library(testthat)
+```
+
+```{r}
+#Example of code I repreaded a lot in my analysis
+
+trees_average_diameter <- vancouver_trees %>%
+  group_by(genus_name)%>%
+  summarize(average_diameter= mean(diameter))
+# Now we can look at this summarized data
+
+view(trees_average_diameter)
+```
+Now, I will make a function that takes in a dataset and groups by a certain categorical variable. I will also make it such that function finds the mean of another numeric variable of the grouped variable.
+
+```{r}
+#' @title Documentation for average_by_group function
+#' @description This function is meant to help summarize the dataset, by essentially taking in a categorical variable that the user wants to group the data by, and then calculating the mean of a specific numeric variable that the user inputs. 
+#' @param data character (1) string, This is the input dataset that the user is working with. I named this argument because it is where the user inputs the dataset they are working with.
+#' @param group character (1) string, This is the categorical variable that the user wants to group the dataset by. I names this as group because it specifies the group or categorical variable the user wants to categorize the data by.
+#' @param numeric_category character (1) string, This is the numeric variable that the user wants to find the mean of, grouped by the 'group' variable. I names this numeric_category because it lets the user know that this is the numerical category that the mean will be calculated from. 
+#' @param na.rm logical value, This is how NA values will be handled in the data. By default, it is set to FALSE, but the user can change the input 
+#' @param ... This allows the user to specify any additional inputs to be used within the mean function
+#'
+#' @return tibble, returns a tibble with the data summarized by group and by the average of a numeric variable within the groups.
+
+average_by_group <- function(data, group, numeric_category, na.rm= FALSE, ...) 
+  # Check if group is numeric and numeric_category is not
+  {check_numerical <- data %>%
+    pull({{numeric_category}}) %>%
+    is.numeric
+  
+if (check_numerical) {data %>%
+    group_by({{group}})%>%
+    summarize(average_variable = mean({{numeric_category}}, na.rm= na.rm, ...))
+  }
+else stop("The group variable must not be numeric.")
+  }
+```
+Examples
+Example 1: Check if the function works
+```{r}
+#I will demonstrate the use of this function from the vancouver trees dataset
+vancouver_trees
+average_by_group(vancouver_trees, genus_name, diameter)
+```
+Example 2: A different dataset
+```{r}
+#For my second example, I will use the penguins dataset, so show the generality of my function
+average_by_group(penguins, island, bill_length_mm)
+
+# Note that here the NAs show up because i set the default value to FALSE< so the NAs are not excluded.
+#But I could also change the setting so that NAs are set to true, and I can pass additional values. Here, I will try to find the average bill_length for species that have no NA values, and I set the trim value to 0.1.
+
+average_by_group(penguins, species, bill_length_mm, na.rm = TRUE, trim=0.1)
+
+```
+Example 3: To show an error incase the user inputs a numerical categorical variabe that is not acually numeric
+```{r}
+error=TRUE
+average_by_group(penguins, species, island)
+
+```
+Testing the function
+```{r}
+#Lets test that inputing a non numeric variable gives me an error
+expect_error(average_by_group(vancouver_trees, genus_name, std_street))
+
+# Additional Tests
+test_that("Tests for average_by_group function", {
+  
+  # Test 1: Vector with no NAs
+  df1 <- tibble(group = c("A", "A", "B", "B"), value = c(10, 20, 30, 40))
+  expect_equal(average_by_group(df1, group, value), tibble(group = c("A", "B"), average_variable = c(15, 35)))
+  
+  # Test 2: Vector that has NAs
+  df2 <- tibble(group = c("A", "A", "B", "B"), value = c(10, NA, 30, 40))
+  expect_no_error(average_by_group(df2, group, value))
+
+  # Test 3: Vector of a different type (using a character vector for numeric_category which should cause an error)
+  df3 <- tibble(group = c(1, 2, 3, 4), value = c("A", "B", "C", "D"))
+  expect_error(average_by_group(df3, group, value))
+  
+  # Test 4: Vector of length 0
+  df4 <- tibble(group = character(0), value = numeric(0))
+  expect_equal(average_by_group(df4, group, value), tibble(group = character(0), average_variable = numeric(0)))
+
+})
+```
+
+
+
