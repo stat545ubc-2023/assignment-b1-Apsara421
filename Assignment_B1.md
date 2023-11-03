@@ -103,7 +103,7 @@ if (check_numerical) {data %>%
   
   
   }
-else stop("The group variable must not be numeric.")
+else stop("The numeric_category be of class numeric.")
   }
 ```
 
@@ -188,7 +188,7 @@ categorical variable that is not actually numeric
 average_by_group(penguins, species, island)
 ```
 
-    ## Error in average_by_group(penguins, species, island): The group variable must not be numeric.
+    ## Error in average_by_group(penguins, species, island): The numeric_category be of class numeric.
 
 Testing the function
 
@@ -218,4 +218,4 @@ test_that("Tests for average_by_group function", {
 })
 ```
 
-    ## Test passed 🎉
+    ## Test passed 😸
