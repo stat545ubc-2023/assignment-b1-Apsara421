@@ -53,7 +53,7 @@ if (check_numerical) {data %>%
   
   
   }
-else stop("The group variable must not be numeric.")
+else stop("The numeric_category be of class numeric.")
   }
 ```
 Examples
